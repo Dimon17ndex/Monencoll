@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Monencoll</title>
   
-  <!-- 1. ПОДКЛЮЧАЕМ МАНИФЕСТ (сюда добавили) -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <link rel="apple-touch-icon" href="images/icon-192.png" />
@@ -14,7 +13,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&display=swap" rel="stylesheet" />
   <style>
-    /* ... ТВОЙ CSS ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ ... */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -53,6 +51,7 @@
       position: relative;
     }
 
+    /* --- МОЛНИИ --- */
     .bg-lightning {
       position: absolute;
       inset: 0;
@@ -60,12 +59,10 @@
       z-index: 0;
       overflow: hidden;
     }
-
     .bg-lightning .bolt {
       position: absolute;
       will-change: transform;
     }
-
     .bg-lightning svg {
       width: 100%;
       height: 100%;
@@ -73,17 +70,18 @@
       fill: #000000;
     }
 
+    /* --- ШАПКА --- */
     .header {
       padding: 20px 24px 10px 24px;
       border-bottom: 1px solid #e0e0e0;
       width: 100%;
       position: relative;
-      z-index: 1;
+      z-index: 10;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: #ffffff;
     }
-
     h1 {
       display: inline-flex;
       font-family: 'Unbounded', Arial, sans-serif;
@@ -103,13 +101,31 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      position: relative;
+      z-index: 50;
+      background: #ffffff;
     }
-
     .account-icon svg {
       width: 100%;
       height: 100%;
       display: block;
       fill: #333333;
+      position: absolute;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .account-icon .icon-profile { opacity: 1; transform: scale(1); }
+    .account-icon .icon-back { opacity: 0; transform: scale(0.5); }
+    .account-icon.is-back .icon-profile { opacity: 0; transform: scale(0.5); }
+    .account-icon.is-back .icon-back { opacity: 1; transform: scale(1); }
+
+    /* =========================================
+       ГЛАВНЫЙ ЭКРАН (без фото и панели)
+       ========================================= */
+    .main-screen {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      transition: opacity 0.4s ease;
     }
 
     .collection-row {
@@ -121,7 +137,6 @@
       position: relative;
       z-index: 1;
     }
-
     .collection-card {
       flex: 1;
       height: 90px;
@@ -134,7 +149,6 @@
       padding: 12px 20px;
       background: rgba(255, 255, 255, 0.8);
     }
-
     .counter {
       font-family: 'Unbounded', Arial, sans-serif;
       font-size: 28px;
@@ -142,14 +156,12 @@
       color: #000000;
       line-height: 1;
     }
-
     .subtitle {
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
       font-size: 12px;
       color: #666666;
       margin-top: 4px;
     }
-
     .add-btn {
       width: 90px;
       height: 90px;
@@ -162,7 +174,6 @@
       cursor: pointer;
       flex-shrink: 0;
     }
-
     .add-btn svg {
       width: 28px;
       height: 28px;
@@ -173,44 +184,11 @@
       pointer-events: none;
     }
 
-    .photo-layer {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      bottom: 90px; 
-      display: flex;
-      justify-content: center;
-      z-index: 4;
-      pointer-events: none;
-      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); 
-      transform: translateY(130px); 
-    }
+    /* =========================================
+       ПАНЕЛЬ И ФОТО (ВЫНЕСЕНЫ)
+       ========================================= */
 
-    .bottom-sheet.open ~ .photo-layer {
-      transform: translateY(calc(-100dvh + 90px + 130px)); 
-    }
-
-    .photo-container {
-      width: 260px;
-      pointer-events: auto;
-      cursor: pointer;
-    }
-
-    .photo-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: contain;
-      -webkit-user-drag: none;
-      -khtml-user-drag: none;
-      -moz-user-drag: none;
-      -o-user-drag: none;
-      user-drag: none;
-      pointer-events: none;
-      -webkit-touch-callout: none;
-      user-select: none;
-    }
-
+    /* Нижняя панель (z-index выше шапки) */
     .bottom-sheet {
       position: absolute;
       left: 0;
@@ -220,13 +198,12 @@
       height: 90px;
       background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
       border-radius: 24px 24px 0 0;
-      z-index: 3;
-      transition: height 0.7s cubic-bezier(0.16, 1, 0.3, 1); 
+      z-index: 30; /* ВЫШЕ ШАПКИ (10) */
+      transition: height 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; 
       box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
       overflow: visible;
       cursor: pointer;
     }
-
     .bottom-sheet.open {
       height: 100dvh;
       overflow-y: auto;
@@ -234,9 +211,12 @@
       -ms-overflow-style: none;
       cursor: default;
     }
-
     .bottom-sheet.open::-webkit-scrollbar {
       display: none;
+    }
+    .bottom-sheet.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .close-btn {
@@ -252,11 +232,9 @@
       z-index: 50; 
       pointer-events: auto;
     }
-
     .bottom-sheet.open .close-btn {
       display: flex;
     }
-
     .close-btn svg {
       width: 100%;
       height: 100%;
@@ -264,7 +242,6 @@
       opacity: 0.7;
       transition: opacity 0.2s;
     }
-
     .close-btn:hover svg {
       opacity: 1;
     }
@@ -282,13 +259,11 @@
       pointer-events: none;
       padding: 0 24px;
     }
-
     .bottom-sheet.open .extra-content {
       opacity: 1;
       pointer-events: auto;
       transition-delay: 0.15s; 
     }
-
     .extra-content p {
       font-size: 14px;
       color: #b0b0b0;
@@ -298,19 +273,117 @@
       text-align: center;
     }
 
+    /* Фото (выше всего) */
+    .photo-layer {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      bottom: 90px; 
+      display: flex;
+      justify-content: center;
+      z-index: 100; /* Выше панели и шапки */
+      pointer-events: none;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; 
+      transform: translateY(130px); 
+    }
+    .bottom-sheet.open ~ .photo-layer {
+      transform: translateY(calc(-100dvh + 90px + 130px)); 
+    }
+    .photo-container {
+      width: 260px;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    .photo-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
+      user-drag: none;
+      pointer-events: none;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+    .photo-layer.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Затемнение (под панелью, но над главным экраном) */
     .overlay {
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.3);
-      z-index: 2;
+      z-index: 20; /* Выше главного экрана (1) и шапки? Нет, ниже шапки (10). Но выше контента. */
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.5s ease; 
     }
-
     .overlay.active {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    /* =========================================
+       ПЛАТФОРМА ПРОФИЛЯ
+       ========================================= */
+    .platform-profile {
+      position: absolute;
+      top: 78px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 5;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+      
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    .platform-profile.active {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .platform-profile h2,
+    .platform-profile p {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .platform-profile.active h2 {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0s;
+    }
+    .platform-profile.active p {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.15s;
+    }
+    .platform-profile h2 {
+      font-family: 'Unbounded', Arial, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 20px;
+    }
+    .platform-profile p {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -320,27 +393,39 @@
 
     <div class="header">
       <h1>Monencoll</h1>
-      <div class="account-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <div class="account-icon" id="accountBtn">
+        <svg class="icon-profile" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <circle cx="12" cy="12" r="10" fill="none" stroke="#333" stroke-width="1.5"/>
           <circle cx="12" cy="10" r="3.5" fill="#333"/>
           <path d="M5.5 19.2C6.8 16.3 9.2 15 12 15s5.2 1.3 6.5 4.2" stroke="#333" stroke-width="1.8" fill="none" stroke-linecap="round"/>
         </svg>
-      </div>
-    </div>
-
-    <div class="collection-row">
-      <div class="collection-card">
-        <div class="counter">0</div>
-        <div class="subtitle">У вас в коллекции</div>
-      </div>
-      <div class="add-btn">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg class="icon-back" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="#333" stroke-width="1.5"/>
+          <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" fill="#333"/>
         </svg>
       </div>
     </div>
 
+    <div class="main-screen" id="mainScreen">
+      <div class="collection-row">
+        <div class="collection-card">
+          <div class="counter">0</div>
+          <div class="subtitle">У вас в коллекции</div>
+        </div>
+        <div class="add-btn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="platform-profile" id="platformProfile">
+      <h2>Ваш профиль</h2>
+      <p>Здесь будет статистика собранных наклеек, достижения и настройки аккаунта.</p>
+    </div>
+
+    <!-- ВЫНЕСЕННЫЕ ЭЛЕМЕНТЫ -->
     <div class="overlay" id="overlay"></div>
 
     <div class="bottom-sheet" id="bottomSheet">
@@ -349,7 +434,6 @@
           <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
         </svg>
       </div>
-
       <div class="extra-content">
         <p>Здесь будет отображаться список всех собранных наклеек Monster Energy.</p>
         <p>Нажмите на крестик, чтобы свернуть панель.</p>
@@ -364,6 +448,7 @@
   </div>
 
   <script>
+    // --- 1. МОЛНИИ ---
     const layer = document.getElementById('bgLightning');
     const boltSvg = `
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -426,11 +511,61 @@
     }
     loop();
 
+    // --- 2. ЛОГИКА ---
+    const accountBtn = document.getElementById('accountBtn');
+    const platformProfile = document.getElementById('platformProfile');
+    const mainScreen = document.getElementById('mainScreen');
+    
     const sheet = document.getElementById('bottomSheet');
     const overlay = document.getElementById('overlay');
     const closeBtn = document.getElementById('closeBtn');
+    const photoLayer = document.getElementById('photoLayer');
     const photoContainer = document.querySelector('.photo-container');
 
+    let isProfileOpen = false;
+
+    function openProfile() {
+      if (isProfileOpen) return;
+      isProfileOpen = true;
+
+      accountBtn.classList.add('is-back');
+      platformProfile.classList.add('active');
+      
+      mainScreen.style.opacity = '0';
+      mainScreen.style.pointerEvents = 'none';
+      
+      photoLayer.classList.add('hidden');
+      sheet.classList.add('hidden');
+      
+      sheet.classList.remove('open');
+      overlay.classList.remove('active');
+    }
+
+    function closeProfile() {
+      if (!isProfileOpen) return;
+      isProfileOpen = false;
+
+      platformProfile.classList.remove('active');
+      accountBtn.classList.remove('is-back');
+      
+      photoLayer.classList.remove('hidden');
+      sheet.classList.remove('hidden');
+      
+      setTimeout(() => {
+        mainScreen.style.opacity = '1';
+        mainScreen.style.pointerEvents = 'auto';
+      }, 150);
+    }
+
+    accountBtn.addEventListener('click', () => {
+      if (isProfileOpen) {
+        closeProfile();
+      } else {
+        openProfile();
+      }
+    });
+
+    // --- 3. ЛОГИКА КОЛЛЕКЦИИ ---
     sheet.addEventListener('click', (e) => {
       if (e.target.closest('.close-btn')) return;
       if (!sheet.classList.contains('open')) {
@@ -441,7 +576,7 @@
 
     photoContainer.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!sheet.classList.contains('open')) {
+      if (!sheet.classList.contains('open') && !isProfileOpen) {
         sheet.classList.add('open');
         overlay.classList.add('active');
       }
@@ -458,13 +593,14 @@
       overlay.classList.remove('active');
     });
 
+    // --- 4. ОТКЛЮЧЕНИЕ МЕНЮ ДЛЯ ФОТО ---
     const photoImg = document.querySelector('.photo-container img');
     if (photoImg) {
       photoImg.addEventListener('contextmenu', (e) => e.preventDefault());
       photoImg.addEventListener('dragstart', (e) => e.preventDefault());
     }
 
-    // 2. РЕГИСТРАЦИЯ SERVICE WORKER (добавили в конец скрипта)
+    // --- 5. SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
