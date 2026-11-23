@@ -4,10 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Monencoll</title>
+  
+  <!-- 1. ПОДКЛЮЧАЕМ МАНИФЕСТ (сюда добавили) -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&display=swap" rel="stylesheet" />
   <style>
+    /* ... ТВОЙ CSS ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ ... */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -166,7 +173,6 @@
       pointer-events: none;
     }
 
-    /* Фото (независимый слой) */
     .photo-layer {
       position: absolute;
       left: 0;
@@ -176,7 +182,6 @@
       justify-content: center;
       z-index: 4;
       pointer-events: none;
-      /* Увеличили время анимации до 0.7s для плавности */
       transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); 
       transform: translateY(130px); 
     }
@@ -206,7 +211,6 @@
       user-select: none;
     }
 
-    /* Нижняя вкладка */
     .bottom-sheet {
       position: absolute;
       left: 0;
@@ -217,7 +221,6 @@
       background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
       border-radius: 24px 24px 0 0;
       z-index: 3;
-      /* Увеличили время анимации до 0.7s */
       transition: height 0.7s cubic-bezier(0.16, 1, 0.3, 1); 
       box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
       overflow: visible;
@@ -236,7 +239,6 @@
       display: none;
     }
 
-    /* Крестик */
     .close-btn {
       position: absolute;
       top: 16px;
@@ -267,7 +269,6 @@
       opacity: 1;
     }
 
-    /* Текст при открытии */
     .extra-content {
       position: absolute;
       top: 120px;
@@ -277,7 +278,6 @@
       flex-direction: column;
       align-items: center;
       opacity: 0;
-      /* Плавное появление текста за 0.5s */
       transition: opacity 0.5s ease; 
       pointer-events: none;
       padding: 0 24px;
@@ -286,7 +286,6 @@
     .bottom-sheet.open .extra-content {
       opacity: 1;
       pointer-events: auto;
-      /* Задержка, чтобы текст появился после начала движения панели */
       transition-delay: 0.15s; 
     }
 
@@ -299,7 +298,6 @@
       text-align: center;
     }
 
-    /* Затенение фона */
     .overlay {
       position: absolute;
       inset: 0;
@@ -307,7 +305,6 @@
       z-index: 2;
       opacity: 0;
       pointer-events: none;
-      /* Затемнение тоже стало плавнее (0.5s) */
       transition: opacity 0.5s ease; 
     }
 
@@ -346,7 +343,6 @@
 
     <div class="overlay" id="overlay"></div>
 
-    <!-- Нижняя вкладка -->
     <div class="bottom-sheet" id="bottomSheet">
       <div class="close-btn" id="closeBtn">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -354,14 +350,12 @@
         </svg>
       </div>
 
-      <!-- Текст, появляющийся при открытии -->
       <div class="extra-content">
         <p>Здесь будет отображаться список всех собранных наклеек Monster Energy.</p>
         <p>Нажмите на крестик, чтобы свернуть панель.</p>
       </div>
     </div>
 
-    <!-- Слой с фото -->
     <div class="photo-layer" id="photoLayer">
       <div class="photo-container">
         <img src="images/monster-energy.png" alt="Monster Energy" />
@@ -432,13 +426,11 @@
     }
     loop();
 
-    // --- Логика вкладки ---
     const sheet = document.getElementById('bottomSheet');
     const overlay = document.getElementById('overlay');
     const closeBtn = document.getElementById('closeBtn');
     const photoContainer = document.querySelector('.photo-container');
 
-    // Открытие по клику на вкладку (в закрытом состоянии)
     sheet.addEventListener('click', (e) => {
       if (e.target.closest('.close-btn')) return;
       if (!sheet.classList.contains('open')) {
@@ -447,7 +439,6 @@
       }
     });
 
-    // Открытие по клику на само фото
     photoContainer.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!sheet.classList.contains('open')) {
@@ -456,24 +447,30 @@
       }
     });
 
-    // Закрытие по крестику
     closeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       sheet.classList.remove('open');
       overlay.classList.remove('active');
     });
 
-    // Закрытие по клику на затемнение
     overlay.addEventListener('click', () => {
       sheet.classList.remove('open');
       overlay.classList.remove('active');
     });
 
-    // Отключаем контекстное меню и перетаскивание для фото
     const photoImg = document.querySelector('.photo-container img');
     if (photoImg) {
       photoImg.addEventListener('contextmenu', (e) => e.preventDefault());
       photoImg.addEventListener('dragstart', (e) => e.preventDefault());
+    }
+
+    // 2. РЕГИСТРАЦИЯ SERVICE WORKER (добавили в конец скрипта)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW зарегистрирован:', reg))
+          .catch(err => console.log('Ошибка SW:', err));
+      });
     }
   </script>
 </body>
