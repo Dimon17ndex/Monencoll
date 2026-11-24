@@ -359,6 +359,25 @@
       visibility: visible;
     }
 
+    .profile-avatar {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 60%, #1c1c1c 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.profile-avatar svg {
+  width: 48px;
+  height: 48px;
+  display: block;
+  fill: #ffffff;
+}
+
     .platform-profile h2,
     .platform-profile p {
       opacity: 0;
@@ -425,7 +444,13 @@
     </div>
 
     <div class="platform-profile" id="platformProfile">
-      <h2>Ваш профиль</h2>
+  <div class="profile-avatar" aria-hidden="true">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/>
+</svg>
+</div>
+
+  <h2>Ваш профиль</h2>
       <p>Здесь будет статистика собранных наклеек, достижения и настройки аккаунта.</p>
     </div>
 
@@ -455,7 +480,7 @@
     // --- 1. МОЛНИИ ---
     const layer = document.getElementById('bgLightning');
     const boltSvg = `
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="-6 0 36 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/>
       </svg>
     `;
