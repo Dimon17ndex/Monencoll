@@ -757,7 +757,9 @@ setTimeout(() => {
 
 avatar.classList.add('lightning-hit');
 
-lightningVibration();
+setTimeout(() => {
+  lightningVibration();
+}, 120);
 
 lightningSound.pause();
 lightningSound.currentTime = 0;
