@@ -413,12 +413,6 @@
 
 /* Прыжковое сжатие кружка */
 
-.profile-avatar.lightning-hit {
-  animation:
-    avatar-flash 2s ease-out,
-    avatar-squash 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
 @keyframes avatar-squash {
   0% {
     transform: scale(1, 1);
@@ -655,6 +649,10 @@
     </div>
   </div>
 
+<audio id="lightningSound" preload="auto">
+  <source src="sounds/lightning.mp3" type="audio/mpeg">
+</audio>
+
   <script>
     // --- 1. МОЛНИИ ---
     const layer = document.getElementById('bgLightning');
@@ -741,12 +739,15 @@ setTimeout(() => {
 
   avatar.classList.remove('lightning-hit');
   void avatar.offsetWidth;
-  avatar.classList.add('lightning-hit');
-  
+
   const lightningSound = document.getElementById('lightningSound');
 
+avatar.classList.add('lightning-hit');
+
+lightningSound.pause();
 lightningSound.currentTime = 0;
 lightningSound.volume = 0.35;
+
 lightningSound.play().catch(() => {});
 
   const sparkContainer = avatar.querySelector('.spark-container');
@@ -859,6 +860,11 @@ requestAnimationFrame(animateSparks);
       overlay.classList.remove('active');
     }
 
+const lightningSound = document.getElementById('lightningSound');
+
+lightningSound.preload = 'auto';
+lightningSound.load();
+
     function closeProfile() {
       if (!isProfileOpen) return;
       isProfileOpen = false;
@@ -927,10 +933,5 @@ requestAnimationFrame(animateSparks);
       });
     }
   </script>
-
-  <audio id="lightningSound" preload="auto">
-  <source src="sounds/lightning.mp3" type="audio/mpeg">
-</audio>
-
 </body>
 </html>
