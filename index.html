@@ -730,6 +730,19 @@
 
     let isProfileOpen = false;
 
+function lightningVibration() {
+  if (!('vibrate' in navigator)) return;
+
+  navigator.vibrate([
+    35, 25,
+    35, 25,
+    35, 60,
+    180, 50,
+    35, 25,
+    35
+  ]);
+}
+
     function openProfile() {
       if (isProfileOpen) return;
       isProfileOpen = true;
@@ -743,6 +756,8 @@ setTimeout(() => {
   const lightningSound = document.getElementById('lightningSound');
 
 avatar.classList.add('lightning-hit');
+
+lightningVibration();
 
 lightningSound.pause();
 lightningSound.currentTime = 0;
