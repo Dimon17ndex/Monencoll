@@ -757,15 +757,15 @@ setTimeout(() => {
 
 avatar.classList.add('lightning-hit');
 
-setTimeout(() => {
-  lightningVibration();
-}, 220);
-
 lightningSound.pause();
 lightningSound.currentTime = 0;
 lightningSound.volume = 0.35;
 
 lightningSound.play().catch(() => {});
+
+setTimeout(() => {
+  lightningVibration();
+}, 220);
 
   const sparkContainer = avatar.querySelector('.spark-container');
 
